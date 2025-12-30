@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/products/update/**").permitAll()
                         .requestMatchers("/products/**").permitAll()
                         .requestMatchers("/logo/**").permitAll()
+                        .requestMatchers("/statistics/**").permitAll()
                         .requestMatchers("/about/**").permitAll()
                         .anyRequest().permitAll()
                 )
