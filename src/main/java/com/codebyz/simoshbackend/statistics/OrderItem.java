@@ -10,7 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.UUID;
 
 @Entity
-@Table(name = "order_items")
+@Table(name = "simosh_order_items")
 public class OrderItem {
 
     @Id
