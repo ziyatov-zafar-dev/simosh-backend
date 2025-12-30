@@ -1,6 +1,6 @@
 package com.codebyz.simoshbackend.statistics.dto;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -8,13 +8,10 @@ import java.util.UUID;
 public class SaleEventRequest {
 
     @NotNull
-    private UUID productId;
-
-    @Min(1)
-    private long quantity;
-
-    @NotNull
     private SaleStatus status;
+
+    @NotEmpty
+    private java.util.List<OrderItemRequest> items;
 
     @NotNull
     private String firstName;
@@ -25,21 +22,7 @@ public class SaleEventRequest {
     @NotNull
     private String phone;
 
-    public UUID getProductId() {
-        return productId;
-    }
-
-    public void setProductId(UUID productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
-    }
+    private String description;
 
     public SaleStatus getStatus() {
         return status;
@@ -47,6 +30,14 @@ public class SaleEventRequest {
 
     public void setStatus(SaleStatus status) {
         this.status = status;
+    }
+
+    public java.util.List<OrderItemRequest> getItems() {
+        return items;
+    }
+
+    public void setItems(java.util.List<OrderItemRequest> items) {
+        this.items = items;
     }
 
     public String getFirstName() {
@@ -71,5 +62,13 @@ public class SaleEventRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

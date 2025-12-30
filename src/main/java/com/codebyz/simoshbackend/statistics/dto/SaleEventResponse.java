@@ -6,32 +6,32 @@ import java.util.UUID;
 public class SaleEventResponse {
 
     private UUID id;
-    private UUID productId;
-    private long quantity;
+    private java.util.List<OrderItemResponse> items;
     private String status;
     private String statusDescription;
     private String firstName;
     private String lastName;
     private String phone;
+    private String description;
     private LocalDateTime createdAt;
 
     public SaleEventResponse(UUID id,
-                             UUID productId,
-                             long quantity,
+                             java.util.List<OrderItemResponse> items,
                              String status,
                              String statusDescription,
                              String firstName,
                              String lastName,
                              String phone,
+                             String description,
                              LocalDateTime createdAt) {
         this.id = id;
-        this.productId = productId;
-        this.quantity = quantity;
+        this.items = items;
         this.status = status;
         this.statusDescription = statusDescription;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.description = description;
         this.createdAt = createdAt;
     }
 
@@ -39,12 +39,8 @@ public class SaleEventResponse {
         return id;
     }
 
-    public UUID getProductId() {
-        return productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
+    public java.util.List<OrderItemResponse> getItems() {
+        return items;
     }
 
     public String getStatus() {
@@ -65,6 +61,10 @@ public class SaleEventResponse {
 
     public String getPhone() {
         return phone;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public LocalDateTime getCreatedAt() {

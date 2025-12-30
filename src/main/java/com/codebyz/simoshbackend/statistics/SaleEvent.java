@@ -24,10 +24,7 @@ public class SaleEvent {
     private UUID id;
 
     @Column(nullable = false)
-    private UUID productId;
-
-    @Column(nullable = false)
-    private long quantity;
+    private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -58,20 +55,12 @@ public class SaleEvent {
         this.id = id;
     }
 
-    public UUID getProductId() {
-        return productId;
+    public String getDescription() {
+        return description;
     }
 
-    public void setProductId(UUID productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public SaleStatus getStatus() {
