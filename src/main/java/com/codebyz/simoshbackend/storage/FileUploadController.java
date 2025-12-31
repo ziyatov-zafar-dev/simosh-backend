@@ -60,52 +60,44 @@ public class FileUploadController {
     }
 
     private String getHttpUrl(HttpServletRequest req) {
-        String forwardedProto = firstHeaderValue(req.getHeader("X-Forwarded-Proto"));
-        String forwardedHost = firstHeaderValue(req.getHeader("X-Forwarded-Host"));
-        String forwardedPort = firstHeaderValue(req.getHeader("X-Forwarded-Port"));
+        String rawProto = req.getHeader("X-Forwarded-Proto");
+        String rawHost = req.getHeader("X-Forwarded-Host");
+        String rawPort = req.getHeader("X-Forwarded-Port");
 
-        String scheme = StringUtils.hasText(forwardedProto) ? forwardedProto : req.getScheme();
-        String serverName = StringUtils.hasText(forwardedHost) ? forwardedHost : req.getServerName();
-        int serverPort = req.getServerPort();
-        if (StringUtils.hasText(forwardedPort)) {
+        String scheme = StringUtils.hasText(rawProto) ? rawProto.split(",")[0].trim() : req.getScheme();
+        String host = StringUtils.hasText(rawHost) ? rawHost.split(",")[0].trim() : req.getServerName();
+        String portValue = StringUtils.hasText(rawPort) ? rawPort.split(",")[0].trim() : null;
+
+        boolean portExplicit = StringUtils.hasText(portValue);
+        int port = req.getServerPort();
+        if (portExplicit) {
             try {
-                serverPort = Integer.parseInt(forwardedPort);
+                port = Integer.parseInt(portValue);
             } catch (NumberFormatException ignored) {
-                // Keep server port from the request when forwarded port is invalid.
+                portExplicit = false;
             }
         }
 
-        boolean isDefaultPort =
-                ("http".equals(scheme) && serverPort == 80) ||
-                        ("https".equals(scheme) && serverPort == 443);
+        String hostOnly = host;
+        int colonIdx = host.indexOf(':');
+        if (colonIdx > -1) {
+            hostOnly = host.substring(0, colonIdx);
+            if (!portExplicit && colonIdx + 1 < host.length()) {
+                try {
+                    port = Integer.parseInt(host.substring(colonIdx + 1));
+                    portExplicit = true;
+                } catch (NumberFormatException ignored) {
+                    // Ignore invalid host port.
+                }
+            }
+        }
 
-        if (serverName.contains(":")) {
-            serverName = stripDefaultPort(serverName, scheme);
-        }
-        boolean hostHasPort = serverName.contains(":");
-        if (isDefaultPort || hostHasPort) {
-            return scheme + "://" + serverName;
+        boolean isIp = hostOnly.matches("\\d{1,3}(\\.\\d{1,3}){3}");
+        boolean useHttp = "http".equalsIgnoreCase(scheme) && isIp;
+        if (useHttp) {
+            return portExplicit ? "http://" + hostOnly + ":" + port : "http://" + hostOnly;
         }
 
-        return scheme + "://" + serverName + ":" + serverPort;
-    }
-
-    private String firstHeaderValue(String header) {
-        if (!StringUtils.hasText(header)) {
-            return null;
-        }
-        int comma = header.indexOf(',');
-        return (comma >= 0 ? header.substring(0, comma) : header).trim();
-    }
-
-    private String stripDefaultPort(String host, String scheme) {
-        String lower = host.toLowerCase();
-        if ("https".equals(scheme) && lower.endsWith(":443")) {
-            return host.substring(0, host.length() - 4);
-        }
-        if ("http".equals(scheme) && lower.endsWith(":80")) {
-            return host.substring(0, host.length() - 3);
-        }
-        return host;
+        return "https://" + hostOnly;
     }
 }
