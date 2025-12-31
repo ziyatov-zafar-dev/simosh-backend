@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/products")
@@ -56,21 +57,42 @@ public class ProductController {
         return ResponseEntity.ok(new MessageResponse("Mahsulot muvaffaqiyatli o'chirildi"));
     }
 
-    private String getHttpUrl(HttpServletRequest req) {
-        String scheme = req.getScheme();
-        String serverName = req.getServerName();
-        int serverPort = req.getServerPort();
+    private final Pattern IP_PATTERN = Pattern.compile(
+            "^\\d{1,3}(\\.\\d{1,3}){3}$"
+    );
 
-        boolean isDefaultPort = ("http".equals(scheme) && serverPort == 80) || ("https".equals(scheme) && serverPort == 443);
+    private boolean isIpAddress(String host) {
+        return IP_PATTERN.matcher(host).matches()
+                || "localhost".equalsIgnoreCase(host);
+    }
 
-        if (isDefaultPort) {
+    //    private String getHttpUrl(HttpServletRequest req) {
+//        String scheme = req.getScheme();
+//        String serverName = req.getServerName();
+//        int serverPort = req.getServerPort();
+//
+//        boolean isDefaultPort = ("http".equals(scheme) && serverPort == 80) || ("https".equals(scheme) && serverPort == 443);
+//
+//        if (isDefaultPort) {
+//            return scheme + "://" + serverName;
+//        }
+//
+//        String res = scheme + "://" + serverName + ":" + serverPort;
+//        if (res.startsWith("https")) {
+//            return res.substring(0, res.length() - 3);
+//        }
+//        return res;
+//    }
+    public String getHttpUrl(HttpServletRequest req) {
+        String scheme = req.getScheme();          // http / https
+        String serverName = req.getServerName();  // domain yoki ip
+
+        // Agar IP bo‘lsa → qanday kelsa shunday qaytar
+        if (isIpAddress(serverName)) {
             return scheme + "://" + serverName;
         }
 
-        String res = scheme + "://" + serverName + ":" + serverPort;
-        if (res.startsWith("https")) {
-            return res.substring(0, res.length() - 3);
-        }
-        return res;
+        // Agar DOMAIN bo‘lsa → har doim HTTPS
+        return "https://" + serverName;
     }
 }
