@@ -5,15 +5,15 @@ import java.util.UUID;
 
 public class SaleEventResponse {
 
-    private UUID id;
-    private java.util.List<OrderItemResponse> items;
-    private String status;
-    private String statusDescription;
-    private String firstName;
-    private String lastName;
-    private String phone;
-    private String description;
-    private LocalDateTime createdAt;
+    private final UUID id;
+    private final java.util.List<OrderItemResponse> items;
+    private final String status;
+    private final String statusDescription;
+    private final String firstName;
+    private final String lastName;
+    private final String phone;
+    private final String description;
+    private final LocalDateTime createdAt;
 
     public SaleEventResponse(UUID id,
                              java.util.List<OrderItemResponse> items,

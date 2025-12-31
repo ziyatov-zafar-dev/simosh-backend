@@ -66,5 +66,6 @@ storage:
     dir: profile
     public-url: /odnlicasjocdiahduhjcoinaurofrejdhiudosjkhfddddddddddddddddddddiopasdijkhieodfjhsiui0eodjifhureodihuosfdjfiles
 app:
-  timezone: Europe/Istanbul
+  timezone: Asia/Tashkent
+#  timezone: Europe/Istanbul
   frontend-url: http://localhost:3000/#
