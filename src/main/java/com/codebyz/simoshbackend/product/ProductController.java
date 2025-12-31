@@ -93,6 +93,10 @@ public class ProductController {
         }
 
         // Agar DOMAIN bo‘lsa → har doim HTTPS
-        return "https://" + serverName;
+        String res = "https://" + serverName;
+        if (res.endsWith(":80")) {
+            return res.substring(0, res.length() - 3);
+        }
+        return res;
     }
 }
