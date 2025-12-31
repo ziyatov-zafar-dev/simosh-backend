@@ -67,6 +67,10 @@ public class ProductController {
             return scheme + "://" + serverName;
         }
 
-        return scheme + "://" + serverName + ":" + serverPort;
+        String res = scheme + "://" + serverName + ":" + serverPort;
+        if (res.startsWith("https")) {
+            return res.substring(0, res.length() - 3);
+        }
+        return res;
     }
 }

@@ -79,6 +79,9 @@ public class FileUploadController {
                 ("http".equals(scheme) && serverPort == 80) ||
                         ("https".equals(scheme) && serverPort == 443);
 
+        if (serverName.contains(":")) {
+            serverName = stripDefaultPort(serverName, scheme);
+        }
         boolean hostHasPort = serverName.contains(":");
         if (isDefaultPort || hostHasPort) {
             return scheme + "://" + serverName;
@@ -93,5 +96,16 @@ public class FileUploadController {
         }
         int comma = header.indexOf(',');
         return (comma >= 0 ? header.substring(0, comma) : header).trim();
+    }
+
+    private String stripDefaultPort(String host, String scheme) {
+        String lower = host.toLowerCase();
+        if ("https".equals(scheme) && lower.endsWith(":443")) {
+            return host.substring(0, host.length() - 4);
+        }
+        if ("http".equals(scheme) && lower.endsWith(":80")) {
+            return host.substring(0, host.length() - 3);
+        }
+        return host;
     }
 }
