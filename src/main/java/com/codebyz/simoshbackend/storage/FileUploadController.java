@@ -60,18 +60,38 @@ public class FileUploadController {
     }
 
     private String getHttpUrl(HttpServletRequest req) {
-        String scheme = req.getScheme();
-        String serverName = req.getServerName();
+        String forwardedProto = firstHeaderValue(req.getHeader("X-Forwarded-Proto"));
+        String forwardedHost = firstHeaderValue(req.getHeader("X-Forwarded-Host"));
+        String forwardedPort = firstHeaderValue(req.getHeader("X-Forwarded-Port"));
+
+        String scheme = StringUtils.hasText(forwardedProto) ? forwardedProto : req.getScheme();
+        String serverName = StringUtils.hasText(forwardedHost) ? forwardedHost : req.getServerName();
         int serverPort = req.getServerPort();
+        if (StringUtils.hasText(forwardedPort)) {
+            try {
+                serverPort = Integer.parseInt(forwardedPort);
+            } catch (NumberFormatException ignored) {
+                // Keep server port from the request when forwarded port is invalid.
+            }
+        }
 
         boolean isDefaultPort =
                 ("http".equals(scheme) && serverPort == 80) ||
                         ("https".equals(scheme) && serverPort == 443);
 
-        if (isDefaultPort) {
+        boolean hostHasPort = serverName.contains(":");
+        if (isDefaultPort || hostHasPort) {
             return scheme + "://" + serverName;
         }
 
         return scheme + "://" + serverName + ":" + serverPort;
+    }
+
+    private String firstHeaderValue(String header) {
+        if (!StringUtils.hasText(header)) {
+            return null;
+        }
+        int comma = header.indexOf(',');
+        return (comma >= 0 ? header.substring(0, comma) : header).trim();
     }
 }
